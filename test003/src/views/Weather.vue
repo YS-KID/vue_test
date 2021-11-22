@@ -130,6 +130,7 @@
         <v-row>
           <v-col>
             <v-card
+              v-if="item !== null"
               class="pa-2"
               outlined
               tile
@@ -207,7 +208,46 @@
   </div>
 </template>
 
-<style>
+<script lang="ts">
+import { Vue } from "vue-property-decorator";
+import ApiClient from '../api/ApiClient';
+
+export interface DataType {
+  item: any | null
+};
+
+export default Vue.extend({
+  name: "ProductList",
+  data(): DataType {
+    return {
+      item: null
+    }
+  },
+  async mounted() {
+    this.item = await ApiClient.getCurrentWeather('Tokyo,jp');
+    console.log(this.item);
+  }
+});
+
+// @Component
+// export default class Weather extends Vue {
+//   private item: any[] = new Array<any>();
+
+//   private created() {
+//     axios
+//       .get(
+//         "https://api.openweathermap.org/data/2.5/weather?q=Tokyo,jp&APPID=681fa0c699b30f64bfb06f2a7e615ee4"
+//       )
+//       .then((response) => {
+//         this.item = response.data;
+//       })
+//       .catch((ex: AxiosError) => {});
+//   }
+// }
+</script>
+
+
+<style scoped>
 .center {
   position: absolute;
   top: 50%;
@@ -241,25 +281,3 @@
   margin-top: 0;
 }
 </style>
-
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import axios, { AxiosError } from "axios";
-import "@mdi/font/css/materialdesignicons.css";
-
-@Component
-export default class GetTownNameClient extends Vue {
-  private item: any[] = new Array<any>();
-
-  private created() {
-    axios
-      .get(
-        "https://api.openweathermap.org/data/2.5/weather?q=Tokyo,jp&APPID=681fa0c699b30f64bfb06f2a7e615ee4"
-      )
-      .then((response) => {
-        this.item = response.data;
-      })
-      .catch((ex: AxiosError) => {});
-  }
-}
-</script>
