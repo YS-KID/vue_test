@@ -129,13 +129,70 @@
       <v-container class="grey lighten-5">
         <v-row>
           <v-col>
-            <v-card class="pa-2" outlined tile height="700">
-              <h2 class="center">Town weather information</h2>
-              <h2 class="towninfo">Get a town name from test API. Town name is {{items[0].address.city}}.</h2>
+            <v-card
+              class="pa-2"
+              outlined
+              tile
+              height="350"
+              :img="require('@/assets/sky.jpeg')"
+            >
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title class="text-h4">
+                    {{ item.name }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="text-h5">
+                    {{ item.sys.country }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-divider></v-divider>
+
+              <v-row align="center">
+                <v-col>
+                  <p class="averagetemp">
+                    {{ (item.main.temp - 273.15).toFixed(2) }}&deg;C
+                  </p>
+                </v-col>
+                <v-col>
+                  <v-img
+                    src="@/assets/sun.png"
+                    alt="Sunny image"
+                    class="weathericon"
+                    height="100"
+                    width="100"
+                  ></v-img>
+                </v-col>
+              </v-row>
+
+              <v-list-item>
+                <v-list-item-icon class="tempicon">
+                  <v-icon>mdi-thermometer-high</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content class="moretemp">
+                  <p class="font-weight-bold">
+                    Highest temp:
+                    {{ (item.main.temp_max - 273.15).toFixed(2) }}&deg;C
+                  </p>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item>
+                <v-list-item-icon class="tempicon">
+                  <v-icon>mdi-thermometer-low</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content class="moretemp">
+                  <p class="font-weight-bold">
+                    Lowest temp:
+                    {{ (item.main.temp_min - 273.15).toFixed(2) }}&deg;C
+                  </p>
+                </v-list-item-content>
+              </v-list-item>
             </v-card>
           </v-col>
           <v-col>
-            <v-card class="pa-2" outlined tile height="700">
+            <v-card class="pa-2" outlined tile height="350">
               <h2 class="center">Map</h2>
             </v-card>
           </v-col>
@@ -153,7 +210,6 @@
 <style>
 .center {
   position: absolute;
-  left: 0;
   top: 50%;
   width: 100%;
   text-align: center;
@@ -161,32 +217,49 @@
 }
 .home {
   width: 100%;
-  height: 350;
-  padding-bottom: 50%;
 }
 .towninfo {
-  width:100%;
+  width: 100%;
   top: 50%;
   text-align: center;
   font-size: 18px;
 }
+.weathericon {
+  margin-top: 5%;
+  margin-left: 20%;
+}
+.averagetemp {
+  text-align: center;
+  margin-top: 10%;
+  font-size: 50px;
+}
+.moretemp {
+  margin-top: -2%;
+}
+.tempicon {
+  margin-left: 2%;
+  margin-top: 0;
+}
 </style>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import axios, { AxiosError } from 'axios';
+import { Component, Vue } from "vue-property-decorator";
+import axios, { AxiosError } from "axios";
+import "@mdi/font/css/materialdesignicons.css";
 
 @Component
 export default class GetTownNameClient extends Vue {
-  private items: any[] = new Array<any>();
+  private item: any[] = new Array<any>();
 
   private created() {
-    axios.get('https://jsonplaceholder.typicode.com/users')
+    axios
+      .get(
+        "https://api.openweathermap.org/data/2.5/weather?q=Tokyo,jp&APPID=681fa0c699b30f64bfb06f2a7e615ee4"
+      )
       .then((response) => {
-        this.items = response.data;
+        this.item = response.data;
       })
-      .catch((ex: AxiosError) => {
-      });
+      .catch((ex: AxiosError) => {});
   }
 }
 </script>

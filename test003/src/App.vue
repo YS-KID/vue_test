@@ -222,16 +222,20 @@ main {
   <v-app>
     <v-navigation-drawer app :value="navBarFlag" clipped>
       <v-container>
-       <v-list-item>
-         <v-list-item-content>
+        <v-list-item>
+          <v-list-item-content>
             <v-list-item-title class="title grey--text text--darken-2">
               Town List
-           </v-list-item-title>
+            </v-list-item-title>
           </v-list-item-content>
-       </v-list-item>
+        </v-list-item>
         <v-divider></v-divider>
         <v-list dense nav>
-          <v-list-item v-for="town in townList" :key="town.name" :to="town.link">
+          <v-list-item
+            v-for="town in townList"
+            :key="town.name"
+            :to="town.link"
+          >
             <v-list-item-icon>
               <v-icon>{{ town.icon }}</v-icon>
             </v-list-item-icon>
@@ -240,10 +244,12 @@ main {
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-container> 
+      </v-container>
     </v-navigation-drawer>
     <v-app-bar color="primary" dark app clipped-left>
-      <v-app-bar-nav-icon @click="navBarFlag=!navBarFlag"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        @click="navBarFlag = !navBarFlag"
+      ></v-app-bar-nav-icon>
       <v-toolbar-title>Town Weather</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
@@ -252,7 +258,7 @@ main {
     </v-app-bar>
     <v-main>
       <router-view />
-      </v-main>
+    </v-main>
     <v-footer color="primary" dark app>
       <v-spacer></v-spacer>
       Town Weather
@@ -261,14 +267,14 @@ main {
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class Button extends Vue {
   public navBarFlag: boolean = false;
   public townList: any[] = [
-    {name: 'Tokyo', icon: 'mdi-vuetify', link: '/weather'},
-    {name: 'New York', icon: 'mdi-vuetify', link: '/weather'},
-    {name: 'Hong Kong', icon: 'mdi-vuetify', link: '/weather'},
+    { name: "Tokyo", icon: "mdi-vuetify", link: "/weather" },
+    { name: "New York", icon: "mdi-vuetify", link: "/weather" },
+    { name: "Hong Kong", icon: "mdi-vuetify", link: "/weather" },
   ];
 }
 </script>
