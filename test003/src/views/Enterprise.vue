@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="d-flex flex-row ma-1">
-      <v-card class="d-flex flex-column ma-1" style="width: 50%" outlined> a</v-card>
-      <v-card class="d-flex ma-1" style="width: 50%" outlined> g</v-card>
+      <v-card class="d-flex flex-column ma-1" outlined> a</v-card>
+      <v-card class="d-flex ma-1" outlined> g</v-card>
     </div>
 
     <v-card class="d-flex ma-2" outlined> e</v-card>

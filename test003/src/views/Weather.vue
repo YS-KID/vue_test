@@ -29,13 +29,8 @@
             </p>
           </div>
           <div class="d-flex align-center ma-1" style="width: 50%" outlined>
-            <!-- srcはこの書き方であってる？ -->
             <v-img
-              v-bind:src="
-                'http://openweathermap.org/img/wn/' +
-                item.weather[0].icon +
-                '@2x.png'
-              "
+              v-bind:src="`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`"
               alt="Sunny image"
               height="150"
               width="150"
