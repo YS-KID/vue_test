@@ -272,9 +272,9 @@ import { Component, Vue } from "vue-property-decorator";
 export default class Button extends Vue {
   public navBarFlag: boolean = false;
   public townList: any[] = [
-    { name: "Tokyo", icon: "mdi-vuetify", link: "/weather" },
-    { name: "New York", icon: "mdi-vuetify", link: "/weather" },
-    { name: "Hong Kong", icon: "mdi-vuetify", link: "/weather" },
+    { name: 'Tokyo', icon: 'mdi-vuetify', link: '/weather' },
+    { name: 'New York', icon: 'mdi-vuetify', link: '/weather' },
+    { name: 'Hong Kong', icon: 'mdi-vuetify', link: '/weather' },
   ];
 }
 </script>
