@@ -69,11 +69,15 @@
           </v-list-item>
         </div>
       </v-card>
-      <v-card class="d-flex ma-1" style="width: 50%" outlined> g</v-card>
+      <v-card class="d-flex ma-1" style="width: 50%" outlined> graph temp</v-card>
     </div>
 
-    <v-card class="d-flex ma-2" outlined> e</v-card>
-    <v-card class="d-flex ma-2 mt-1" outlined> f</v-card>
+    <v-card class="d-flex ma-2" outlined> 5 days forecast</v-card>
+
+    <div class="d-flex flex-row ma-2" style="height:350px">
+      <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/2/1.png'"></v-img>
+      <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/3/1.png'"></v-img>
+    </div>
   </div>
 </template>
 
@@ -100,26 +104,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.center {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  text-align: center;
-  font-size: 18px;
-}
-.home {
-  width: 100%;
-}
-.towninfo {
-  width: 100%;
-  top: 50%;
-  text-align: center;
-  font-size: 18px;
-}
-.weathericon {
-  margin-top: 5%;
-  margin-left: 20%;
-}
 .averagetemp {
   text-align: center;
   font-size: 50px;
