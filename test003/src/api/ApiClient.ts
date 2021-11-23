@@ -20,6 +20,16 @@ export default class ApiClient {
     return data;
   }
 
+  static async getForecastWeather(location: string): Promise<any> { // Tokyo,jp
+    const { data } = await axios.get(`${this.apiUrlOpenWeatherMap}/forecast`, {
+      params: {
+        q: location,
+        APPID: this.appIdOpenWeatherMap
+      }
+    });
+    return data;
+  }
+
   static async getThreeWeeksWeather(location: string): Promise<any> { // Tokyo,jp
     const { data } = await axios.get(`${this.apiUrlOpenWeatherMap}/3weather`, {
       params: {

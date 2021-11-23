@@ -11,10 +11,10 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="text-h4">
-                {{ item.name }}
+                {{ currentWeather.name }}
               </v-list-item-title>
               <v-list-item-subtitle class="text-h5">
-                {{ item.sys.country }}
+                {{ currentWeather.sys.country }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -25,12 +25,12 @@
         <div class="d-flex flex-row ma-1">
           <div class="d-flex ma-1" style="width: 50%" outlined>
             <p class="averagetemp mt-11 ml-10">
-              {{ (item.main.temp - 273.15).toFixed(2) }}&deg;C
+              {{ (currentWeather.main.temp - 273.15).toFixed(2) }}&deg;C
             </p>
           </div>
           <div class="d-flex align-center ma-1" style="width: 50%" outlined>
             <v-img
-              v-bind:src="`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`"
+              v-bind:src="getWeatherIconUrl(currentWeather.weather[0].icon)"
               alt="Sunny image"
               height="150"
               width="150"
@@ -46,7 +46,7 @@
             <v-list-item-content class="moretemp">
               <p class="font-weight-bold">
                 Highest temp:
-                {{ (item.main.temp_max - 273.15).toFixed(2) }}&deg;C
+                {{ (currentWeather.main.temp_max - 273.15).toFixed(2) }}&deg;C
               </p>
             </v-list-item-content>
           </v-list-item>
@@ -58,18 +58,26 @@
             <v-list-item-content class="moretemp">
               <p class="font-weight-bold">
                 Lowest temp:
-                {{ (item.main.temp_min - 273.15).toFixed(2) }}&deg;C
+                {{ (currentWeather.main.temp_min - 273.15).toFixed(2) }}&deg;C
               </p>
             </v-list-item-content>
           </v-list-item>
         </div>
       </v-card>
-      <v-card class="d-flex ma-1" style="width: 50%" outlined> graph temp</v-card>
+      <v-card class="d-flex ma-1" style="width: 50%" outlined>
+        <div id="chart">
+          <apexchart
+            type="line"
+            :options="options"
+            :series="series"
+          ></apexchart>
+        </div>
+      </v-card>
     </div>
 
     <v-card class="d-flex ma-2" outlined> 5 days forecast</v-card>
 
-    <div class="d-flex flex-row ma-2" style="height:350px">
+    <div class="d-flex flex-row ma-2" style="height: 350px">
       <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/2/1.png'"></v-img>
       <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/3/1.png'"></v-img>
     </div>
@@ -79,21 +87,55 @@
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
 import ApiClient from "../api/ApiClient";
+import VueApexCharts from "vue-apexcharts";
+
+Vue.use(VueApexCharts);
+Vue.component("apexchart", VueApexCharts);
 
 export interface DataType {
-  item: any | null;
+  currentWeather: any | null;
+  forecastWeather: any | null;
 }
 
 export default Vue.extend({
-  name: "ProductList",
   data(): DataType {
     return {
-      item: null,
+      currentWeather: null,
+      forecastWeather: null,
     };
   },
   async mounted() {
-    this.item = await ApiClient.getCurrentWeather("Tokyo,jp");
-    console.log(this.item);
+    this.currentWeather = await ApiClient.getCurrentWeather("Tokyo,jp");
+    this.forecastWeather = await ApiClient.getForecastWeather("Tokyo,jp");
+  },
+  computed: {
+    options() {
+      return {
+        chart: {
+          id: "vuechart-example",
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+        },
+      };
+    },
+    series(): { name: string; data: number[] }[] {
+      return [
+        {
+          name: "series-1",
+          data: this.getChartData(),
+        },
+      ];
+    },
+  },
+  methods: {
+    getWeatherIconUrl(iconId: string): string {
+      return `http://openweathermap.org/img/wn/${iconId}@2x.png`;
+    },
+    getChartData(): number[] {
+      return [10, 20, 30, 40];
+      //return [10, 20, 30, this.forecastWeather.list[0].main.temp];
+    },
   },
 });
 </script>
