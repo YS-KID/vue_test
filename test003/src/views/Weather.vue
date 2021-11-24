@@ -64,12 +64,14 @@
           </v-list-item>
         </div>
       </v-card>
-      <v-card class="d-flex ma-1" style="width: 50%" outlined>
+      <v-card class="d-flex justify-center ma-1" style="width: 50%" outlined>
         <div id="chart">
           <apexchart
             type="line"
             :options="options"
             :series="series"
+            height="100%"
+            :width="widthApexCharts"
           ></apexchart>
         </div>
       </v-card>
@@ -104,7 +106,7 @@ export default Vue.extend({
       forecastWeather: null,
     };
   },
-  async mounted() {
+  async mounted(): Promise<void> {
     this.currentWeather = await ApiClient.getCurrentWeather("Tokyo,jp");
     this.forecastWeather = await ApiClient.getForecastWeather("Tokyo,jp");
   },
@@ -113,19 +115,66 @@ export default Vue.extend({
       return {
         chart: {
           id: "vuechart-example",
+          toolbar: {
+            show: false,
+          },
         },
         xaxis: {
           categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+          title: {
+            text: "Hour",
+          },
+        },
+        yaxis: {
+          title: {
+            text: "Temperature",
+          },
+          min: 5,
+          max: 40,
+        },
+        dataLabels: {
+          enabled: true,
+        },
+        grid: {
+          borderColor: "#e7e7e7",
+          row: {
+            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+            opacity: 0.5,
+          },
+        },
+        title: {
+          text: "Forecast Average Temperature",
+          align: "left",
         },
       };
+    },
+    chartData(): number[] {
+      const item = this.forecastWeather;
+      const data = [10, 20, 30, 40]
+      //const data = [item.list[0].main.temp];
+      return data;
     },
     series(): { name: string; data: number[] }[] {
       return [
         {
-          name: "series-1",
-          data: this.getChartData(),
+          name: "Average Temperature",
+          data: this.chartData,
         },
       ];
+    },
+    widthApexCharts() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return "50%";
+        case "sm":
+          return "100%";
+        case "md":
+          return "150%";
+        case "lg":
+          return "160%";
+        case "xl":
+          return "200%";
+      }
     },
   },
   methods: {
@@ -151,5 +200,9 @@ export default Vue.extend({
 .tempicon {
   margin-left: 2%;
   margin-top: 0;
+}
+.chart {
+  max-width: 650px;
+  margin: 35px auto;
 }
 </style>

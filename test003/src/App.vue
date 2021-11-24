@@ -268,13 +268,31 @@ main {
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-@Component
-export default class Button extends Vue {
-  public navBarFlag: boolean = false;
-  public townList: any[] = [
-    { name: 'Tokyo', icon: 'mdi-vuetify', link: '/weather' },
-    { name: 'New York', icon: 'mdi-vuetify', link: '/weather' },
-    { name: 'Hong Kong', icon: 'mdi-vuetify', link: '/weather' },
-  ];
+
+export interface DataType {
+  navBarFlag: boolean;
+  townList: any[];
 }
+
+export default Vue.extend({
+  data(): DataType {
+    return {
+      navBarFlag: false,
+      townList: [
+        { name: 'Tokyo', icon: 'mdi-vuetify', link: '/weather' },
+        { name: 'New York', icon: 'mdi-vuetify', link: '/weather' },
+        { name: 'Hong Kong', icon: 'mdi-vuetify', link: '/weather' },
+      ],
+    };
+  },
+});
+//@Component
+//export default class Button extends Vue {
+//  public navBarFlag: boolean = false;
+//  public townList: any[] = [
+//    { name: 'Tokyo', icon: 'mdi-vuetify', link: '/weather' },
+//    { name: 'New York', icon: 'mdi-vuetify', link: '/weather' },
+//    { name: 'Hong Kong', icon: 'mdi-vuetify', link: '/weather' },
+//  ];
+//}
 </script>
