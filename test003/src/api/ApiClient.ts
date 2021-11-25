@@ -14,7 +14,8 @@ export default class ApiClient {
     const { data } = await axios.get(`${this.apiUrlOpenWeatherMap}/weather`, {
       params: {
         q: location,
-        APPID: this.appIdOpenWeatherMap
+        APPID: this.appIdOpenWeatherMap,
+        units: 'metric'
       }
     });
     return data;
@@ -24,7 +25,8 @@ export default class ApiClient {
     const { data } = await axios.get(`${this.apiUrlOpenWeatherMap}/forecast`, {
       params: {
         q: location,
-        APPID: this.appIdOpenWeatherMap
+        APPID: this.appIdOpenWeatherMap,
+        units: 'metric'
       }
     });
     return data;
@@ -34,7 +36,8 @@ export default class ApiClient {
     const { data } = await axios.get(`${this.apiUrlOpenWeatherMap}/3weather`, {
       params: {
         q: location,
-        APPID: this.appIdOpenWeatherMap
+        APPID: this.appIdOpenWeatherMap,
+        units: 'metric'
       }
     });
     return data;

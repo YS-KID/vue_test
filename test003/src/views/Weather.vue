@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex flex-row ma-1">
+    <div class="d-flex flex-row ma-1" v-if="forecastWeather !== null">
       <v-card
         class="d-flex flex-column ma-1"
         style="width: 50%"
@@ -106,7 +106,7 @@ export default Vue.extend({
       forecastWeather: null,
     };
   },
-  async mounted(): Promise<void> {
+  async mounted() {
     this.currentWeather = await ApiClient.getCurrentWeather("Tokyo,jp");
     this.forecastWeather = await ApiClient.getForecastWeather("Tokyo,jp");
   },
@@ -150,8 +150,10 @@ export default Vue.extend({
     },
     chartData(): number[] {
       const item = this.forecastWeather;
-      const data = [10, 20, 30, 40]
-      //const data = [item.list[0].main.temp];
+      console.log(item);
+      // const data = [10, 20, 30, 40]
+      const data = item.list.map((i: any) => i.main.temp);
+      // const data = [item.list[0].main.temp];
       return data;
     },
     series(): { name: string; data: number[] }[] {
@@ -180,10 +182,6 @@ export default Vue.extend({
   methods: {
     getWeatherIconUrl(iconId: string): string {
       return `http://openweathermap.org/img/wn/${iconId}@2x.png`;
-    },
-    getChartData(): number[] {
-      return [10, 20, 30, 40];
-      //return [10, 20, 30, this.forecastWeather.list[0].main.temp];
     },
   },
 });
