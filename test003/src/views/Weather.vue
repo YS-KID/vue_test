@@ -164,8 +164,12 @@ export default Vue.extend({
     chartCategory(): string[] {
       const item = this.forecastWeather;
       console.log(item);
+      console.log(item.city.timezone / 60 / 60);
       const category = item.list
-        .map((i: any) => i.dt_txt.substr(11, 5))
+        .map(
+          (i: any) =>
+            `${String((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24)}:00`
+        )
         .slice(0, this.forecastDataNum);
       return category;
     },
