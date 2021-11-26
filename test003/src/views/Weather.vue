@@ -25,7 +25,7 @@
         <div class="d-flex flex-row ma-1">
           <div class="d-flex ma-1" style="width: 50%" outlined>
             <p class="averagetemp mt-11 ml-10">
-              {{ (currentWeather.main.temp - 273.15).toFixed(2) }}&deg;C
+              {{ currentWeather.main.temp.toFixed(2) }}&deg;C
             </p>
           </div>
           <div class="d-flex align-center ma-1" style="width: 50%" outlined>
@@ -46,7 +46,7 @@
             <v-list-item-content class="moretemp">
               <p class="font-weight-bold">
                 Highest temp:
-                {{ (currentWeather.main.temp_max - 273.15).toFixed(2) }}&deg;C
+                {{ currentWeather.main.temp_max.toFixed(2) }}&deg;C
               </p>
             </v-list-item-content>
           </v-list-item>
@@ -58,7 +58,7 @@
             <v-list-item-content class="moretemp">
               <p class="font-weight-bold">
                 Lowest temp:
-                {{ (currentWeather.main.temp_min - 273.15).toFixed(2) }}&deg;C
+                {{ currentWeather.main.temp_min.toFixed(2) }}&deg;C
               </p>
             </v-list-item-content>
           </v-list-item>
@@ -97,6 +97,7 @@ Vue.component("apexchart", VueApexCharts);
 export interface DataType {
   currentWeather: any | null;
   forecastWeather: any | null;
+  forecastDataNum: number;
 }
 
 export default Vue.extend({
@@ -104,13 +105,19 @@ export default Vue.extend({
     return {
       currentWeather: null,
       forecastWeather: null,
+      forecastDataNum: 9,
     };
   },
   async mounted() {
-    this.currentWeather = await ApiClient.getCurrentWeather("Tokyo,jp");
-    this.forecastWeather = await ApiClient.getForecastWeather("Tokyo,jp");
+    this.currentWeather = await ApiClient.getCurrentWeather(this.city);
+    this.forecastWeather = await ApiClient.getForecastWeather(this.city);
   },
   computed: {
+    city(): string {
+      const params = this.getParams(location.search);
+      const city = params["city"];
+      return city;
+    },
     options() {
       return {
         chart: {
@@ -120,17 +127,17 @@ export default Vue.extend({
           },
         },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+          categories: (this as any).chartCategory,
           title: {
-            text: "Hour",
+            text: "Time(Hour)",
           },
         },
         yaxis: {
           title: {
-            text: "Temperature",
+            text: "Temperature(°C)",
           },
-          min: 5,
-          max: 40,
+          min: (this as any).minTemp,
+          max: (this as any).maxTemp,
         },
         dataLabels: {
           enabled: true,
@@ -138,22 +145,36 @@ export default Vue.extend({
         grid: {
           borderColor: "#e7e7e7",
           row: {
-            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+            colors: ["#f3f3f3", "transparent"],
             opacity: 0.5,
           },
         },
         title: {
-          text: "Forecast Average Temperature",
+          text: "Forecast Temperature(24 hours)",
           align: "left",
         },
       };
     },
+    minTemp(): number {
+      return Math.min(...this.chartData) - 2;
+    },
+    maxTemp(): number {
+      return Math.max(...this.chartData) + 2;
+    },
+    chartCategory(): string[] {
+      const item = this.forecastWeather;
+      console.log(item);
+      const category = item.list
+        .map((i: any) => i.dt_txt.substr(11, 5))
+        .slice(0, this.forecastDataNum);
+      return category;
+    },
     chartData(): number[] {
       const item = this.forecastWeather;
       console.log(item);
-      // const data = [10, 20, 30, 40]
-      const data = item.list.map((i: any) => i.main.temp);
-      // const data = [item.list[0].main.temp];
+      const data = item.list
+        .map((i: any) => i.main.temp)
+        .slice(0, this.forecastDataNum);
       return data;
     },
     series(): { name: string; data: number[] }[] {
@@ -182,6 +203,14 @@ export default Vue.extend({
   methods: {
     getWeatherIconUrl(iconId: string): string {
       return `http://openweathermap.org/img/wn/${iconId}@2x.png`;
+    },
+    getParams(params: string): { [key: string]: string } {
+      const paramsArray = params.slice(1).split("&");
+      const paramsObject: { [key: string]: string } = {};
+      paramsArray.forEach((param) => {
+        paramsObject[param.split("=")[0]] = param.split("=")[1];
+      });
+      return paramsObject;
     },
   },
 });
