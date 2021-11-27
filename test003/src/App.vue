@@ -287,7 +287,7 @@ export default Vue.extend({
         { name: '大阪', icon: 'mdi-vuetify', link: '/weather?city=Osaka' },
         { name: '沖縄', icon: 'mdi-vuetify', link: '/weather?city=Okinawa' },
         { name: '札幌', icon: 'mdi-vuetify', link: '/weather?city=Sapporo' },
-        //{name: 'New York', icon: 'mdi-vuetify', link: '/weather?city=New%20York'}
+        {name: 'New York', icon: 'mdi-vuetify', link: '/weather?city=New York'}
       ],
     };
   },

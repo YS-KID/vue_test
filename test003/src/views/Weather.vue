@@ -90,11 +90,13 @@
 import { Vue } from "vue-property-decorator";
 import ApiClient from "../api/ApiClient";
 import VueApexCharts from "vue-apexcharts";
+import { ApexOptions } from 'apexcharts';
 
 Vue.use(VueApexCharts);
 Vue.component("apexchart", VueApexCharts);
 
 export interface DataType {
+  city: string;
   currentWeather: any | null;
   forecastWeather: any | null;
   forecastDataNum: number;
@@ -103,22 +105,19 @@ export interface DataType {
 export default Vue.extend({
   data(): DataType {
     return {
+      city: '',
       currentWeather: null,
       forecastWeather: null,
       forecastDataNum: 9,
     };
   },
   async mounted() {
+    this.city = this.$route.query.city as string;
     this.currentWeather = await ApiClient.getCurrentWeather(this.city);
     this.forecastWeather = await ApiClient.getForecastWeather(this.city);
   },
   computed: {
-    city(): string {
-      const params = this.getParams(location.search);
-      const city = params["city"];
-      return city;
-    },
-    options() {
+    options(): ApexOptions {
       return {
         chart: {
           id: "vuechart-example",
@@ -127,7 +126,7 @@ export default Vue.extend({
           },
         },
         xaxis: {
-          categories: (this as any).chartCategory,
+          categories: this.chartCategory,
           title: {
             text: "Time(Hour)",
           },
@@ -136,8 +135,8 @@ export default Vue.extend({
           title: {
             text: "Temperature(°C)",
           },
-          min: (this as any).minTemp,
-          max: (this as any).maxTemp,
+          min: this.minTemp,
+          max: this.maxTemp,
         },
         dataLabels: {
           enabled: true,
