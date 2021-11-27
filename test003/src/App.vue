@@ -235,6 +235,7 @@ main {
             v-for="town in townList"
             :key="town.name"
             :to="town.link"
+            @click="city = town.name"
           >
             <v-list-item-icon>
               <v-icon>{{ town.icon }}</v-icon>
@@ -256,7 +257,7 @@ main {
         <v-btn text to="/select">home</v-btn>
       </v-toolbar-items>
     </v-app-bar>
-    <v-main>
+    <v-main :key="city">
       <router-view />
     </v-main>
     <v-footer color="primary" dark app>
@@ -270,6 +271,7 @@ main {
 import { Component, Vue } from "vue-property-decorator";
 
 export interface DataType {
+  city: string;
   navBarFlag: boolean;
   townList: any[];
 }
@@ -277,6 +279,7 @@ export interface DataType {
 export default Vue.extend({
   data(): DataType {
     return {
+      city: '東京',
       navBarFlag: false,
       townList: [
         { name: '東京', icon: 'mdi-vuetify', link: '/weather?city=Tokyo' },
