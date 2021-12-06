@@ -32,26 +32,33 @@
             <v-img
               v-bind:src="getWeatherIconUrl(currentWeather.weather[0].icon)"
               alt="Sunny image"
-              height="150"
-              width="150"
+              height="100"
+              width="100"
               contain
             ></v-img>
           </div>
         </div>
+
         <div class="d-flex flex-column ma-1">
           <v-list-item>
-            <v-list-item-icon class="tempicon">
+            <!--v-list-item-icon class="tempicon">
               <v-icon>mdi-thermometer-high</v-icon>
-            </v-list-item-icon>
+            </v-list-item-icon-->
             <v-list-item-content class="moretemp">
               <p class="font-weight-bold">
-                Highest temp:
-                {{ currentWeather.main.temp_max.toFixed(2) }}&deg;C
+                Feeling likes
+                {{ currentWeather.main.feels_like.toFixed(2) }}&deg;C.
+                {{
+                  currentWeather.weather[0].description
+                    .charAt(0)
+                    .toUpperCase() +
+                  currentWeather.weather[0].description.slice(1)
+                }}. Wind speed is {{ currentWeather.wind.speed }}m/s.
               </p>
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item>
+          <!--v-list-item>
             <v-list-item-icon class="tempicon">
               <v-icon>mdi-thermometer-low</v-icon>
             </v-list-item-icon>
@@ -61,7 +68,7 @@
                 {{ currentWeather.main.temp_min.toFixed(2) }}&deg;C
               </p>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item-->
         </div>
       </v-card>
       <v-card class="d-flex justify-center ma-1" style="width: 50%" outlined>
@@ -79,9 +86,17 @@
 
     <v-card class="d-flex ma-2" outlined> 5 days forecast</v-card>
 
-    <div class="d-flex flex-row ma-2" style="height: 350px">
-      <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/2/1.png'"></v-img>
-      <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/3/1.png'"></v-img>
+    <div class="ma-2" v-if="currentWeather !== null">
+      <v-img
+        v-bind:src="
+          getMapUrl(currentWeather.coord.lon, currentWeather.coord.lat)[0]
+        "
+      ></v-img>
+      <!--v-img
+        v-bind:src="
+          getMapUrl(currentWeather.coord.lon, currentWeather.coord.lat)[1]
+        "
+      ></v-img-->
     </div>
   </div>
 </template>
@@ -90,7 +105,8 @@
 import { Vue } from "vue-property-decorator";
 import ApiClient from "../api/ApiClient";
 import VueApexCharts from "vue-apexcharts";
-import { ApexOptions } from 'apexcharts';
+import { ApexOptions } from "apexcharts";
+import 'leaflet/dist/leaflet.css';
 
 Vue.use(VueApexCharts);
 Vue.component("apexchart", VueApexCharts);
@@ -105,13 +121,14 @@ export interface DataType {
 export default Vue.extend({
   data(): DataType {
     return {
-      city: '',
+      city: "",
       currentWeather: null,
       forecastWeather: null,
       forecastDataNum: 9,
     };
   },
-  async mounted() {
+
+  async mounted(): Promise<void> {
     this.city = this.$route.query.city as string;
     this.currentWeather = await ApiClient.getCurrentWeather(this.city);
     this.forecastWeather = await ApiClient.getForecastWeather(this.city);
@@ -167,7 +184,9 @@ export default Vue.extend({
       const category = item.list
         .map(
           (i: any) =>
-            `${String((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24)}:00`
+            `${String(
+              (Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24
+            )}:00`
         )
         .slice(0, this.forecastDataNum);
       return category;
@@ -188,7 +207,7 @@ export default Vue.extend({
         },
       ];
     },
-    widthApexCharts() {
+    widthApexCharts(): string {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
           return "50%";
@@ -214,6 +233,29 @@ export default Vue.extend({
         paramsObject[param.split("=")[0]] = param.split("=")[1];
       });
       return paramsObject;
+    },
+    getMapUrl(lon: number, lat: number): string[] {
+      const xyz = this.getTileXYZ(lon, lat);
+      return [
+        `https://a.tile.openstreetmap.org/${xyz[2]}/${xyz[0]}/${
+          xyz[1]
+        }.png`,
+        `https://a.tile.openstreetmap.org/${xyz[2]}/${xyz[0]}/${xyz[1]}.png`,
+      ];
+    },
+    getTileXYZ(lon: number, lat: number): number[] {
+      console.log("lon lan");
+      console.log(lon);
+      console.log(lat);
+      const zoom = 2;
+      const n = 2 * zoom;
+      const xtile = n * ((lon + 180) / 360);
+      const lat_rad = (lat * Math.PI) / 180;
+      const sec = 1 / Math.cos(lat_rad);
+      const ytile = (n * (1 - Math.log(Math.tan(lat_rad) + sec) / Math.PI)) / 2;
+      console.log(Math.floor(xtile));
+      console.log(Math.floor(ytile));
+      return [Math.floor(xtile), Math.floor(ytile), zoom];
     },
   },
 });
