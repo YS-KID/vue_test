@@ -303,9 +303,9 @@ export default Vue.extend({
           link: { path: "/weather", query: { city: "London" } },
         },
         {
-          name: "札幌",
+          name: "Washington",
           icon: "mdi-vuetify",
-          link: { path: "/weather", query: { city: "Sapporo" } },
+          link: { path: "/weather", query: { city: "Washington" } },
         },
       ],
     };

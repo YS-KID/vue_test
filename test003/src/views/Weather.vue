@@ -3,7 +3,7 @@
     <div class="d-flex flex-row ma-1" v-if="forecastWeather !== null">
       <v-card
         class="d-flex flex-column ma-1"
-        style="width: 50%"
+        style="width: 200"
         outlined
         :img="require('@/assets/sky_2.jpg')"
       >
@@ -41,9 +41,6 @@
 
         <div class="d-flex flex-column ma-1">
           <v-list-item>
-            <!--v-list-item-icon class="tempicon">
-              <v-icon>mdi-thermometer-high</v-icon>
-            </v-list-item-icon-->
             <v-list-item-content class="moretemp">
               <p class="font-weight-bold">
                 Feeling likes
@@ -57,21 +54,9 @@
               </p>
             </v-list-item-content>
           </v-list-item>
-
-          <!--v-list-item>
-            <v-list-item-icon class="tempicon">
-              <v-icon>mdi-thermometer-low</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content class="moretemp">
-              <p class="font-weight-bold">
-                Lowest temp:
-                {{ currentWeather.main.temp_min.toFixed(2) }}&deg;C
-              </p>
-            </v-list-item-content>
-          </v-list-item-->
         </div>
       </v-card>
-      <v-card class="d-flex justify-center ma-1" style="width: 50%" outlined>
+      <v-card class="d-flex justify-center ma-1" style="width: 200" outlined>
         <div id="chart">
           <apexchart
             type="line"
@@ -84,19 +69,44 @@
       </v-card>
     </div>
 
-    <v-card class="d-flex ma-2" outlined> 5 days forecast</v-card>
-
-    <div class="ma-2" v-if="currentWeather !== null">
-      <v-img
-        v-bind:src="
-          getMapUrl(currentWeather.coord.lon, currentWeather.coord.lat)[0]
-        "
-      ></v-img>
-      <!--v-img
-        v-bind:src="
-          getMapUrl(currentWeather.coord.lon, currentWeather.coord.lat)[1]
-        "
-      ></v-img-->
+    <div class="d-flex flex-row ma-1" v-if="forecastWeather !== null">
+      <v-card class="d-flex ma-2" style="width: 400" :img="require('@/assets/sky_2.jpg')" outlined>
+        <v-container>
+          <v-row :justify="center">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-h6">
+                  Weather forecast (every 6 hours)
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-row>
+          <v-row :justify="center">
+            <v-col v-for="n in 7" :key="n">
+              <v-card color="transparent">
+                <v-img
+                  v-bind:src="
+                    getWeatherIconUrl(
+                      forecastWeather.list[n * 2].weather[0].icon
+                    )
+                  "
+                  alt="Sunny image"
+                  height="100"
+                  width="100"
+                  contain
+                ></v-img>
+                <p class="text-center">
+                  {{ getDay(forecastWeather.list[n * 2].dt_txt) }}
+                </p>
+                <p class="text-center">
+                  {{ getHour(forecastWeather.list[n * 2].dt_txt) }}
+                </p>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-col> </v-col>
+      </v-card>
     </div>
   </div>
 </template>
@@ -106,7 +116,6 @@ import { Vue } from "vue-property-decorator";
 import ApiClient from "../api/ApiClient";
 import VueApexCharts from "vue-apexcharts";
 import { ApexOptions } from "apexcharts";
-import 'leaflet/dist/leaflet.css';
 
 Vue.use(VueApexCharts);
 Vue.component("apexchart", VueApexCharts);
@@ -116,6 +125,7 @@ export interface DataType {
   currentWeather: any | null;
   forecastWeather: any | null;
   forecastDataNum: number;
+  month: string[];
 }
 
 export default Vue.extend({
@@ -125,6 +135,20 @@ export default Vue.extend({
       currentWeather: null,
       forecastWeather: null,
       forecastDataNum: 9,
+      month: [
+        "Jan. ",
+        "Feb. ",
+        "Mar. ",
+        "Apr. ",
+        "May ",
+        "June ",
+        "July ",
+        "Aug. ",
+        "Sept.",
+        "Oct. ",
+        "Nov. ",
+        "Dec. ",
+      ],
     };
   },
 
@@ -166,7 +190,7 @@ export default Vue.extend({
           },
         },
         title: {
-          text: "Forecast Temperature(24 hours)",
+          text: "Temperature forecast (24 hours)",
           align: "left",
         },
       };
@@ -189,6 +213,7 @@ export default Vue.extend({
             )}:00`
         )
         .slice(0, this.forecastDataNum);
+      category[0] = "now";
       return category;
     },
     chartData(): number[] {
@@ -226,36 +251,12 @@ export default Vue.extend({
     getWeatherIconUrl(iconId: string): string {
       return `http://openweathermap.org/img/wn/${iconId}@2x.png`;
     },
-    getParams(params: string): { [key: string]: string } {
-      const paramsArray = params.slice(1).split("&");
-      const paramsObject: { [key: string]: string } = {};
-      paramsArray.forEach((param) => {
-        paramsObject[param.split("=")[0]] = param.split("=")[1];
-      });
-      return paramsObject;
+    getDay(date: string): string {
+      console.log(date);
+      return `${this.month[Number(date.substr(5, 2)) - 1]}${date.substr(8, 2)}`;
     },
-    getMapUrl(lon: number, lat: number): string[] {
-      const xyz = this.getTileXYZ(lon, lat);
-      return [
-        `https://a.tile.openstreetmap.org/${xyz[2]}/${xyz[0]}/${
-          xyz[1]
-        }.png`,
-        `https://a.tile.openstreetmap.org/${xyz[2]}/${xyz[0]}/${xyz[1]}.png`,
-      ];
-    },
-    getTileXYZ(lon: number, lat: number): number[] {
-      console.log("lon lan");
-      console.log(lon);
-      console.log(lat);
-      const zoom = 2;
-      const n = 2 * zoom;
-      const xtile = n * ((lon + 180) / 360);
-      const lat_rad = (lat * Math.PI) / 180;
-      const sec = 1 / Math.cos(lat_rad);
-      const ytile = (n * (1 - Math.log(Math.tan(lat_rad) + sec) / Math.PI)) / 2;
-      console.log(Math.floor(xtile));
-      console.log(Math.floor(ytile));
-      return [Math.floor(xtile), Math.floor(ytile), zoom];
+    getHour(date: string): string {
+      return `${date.substr(11, 5)}`;
     },
   },
 });
