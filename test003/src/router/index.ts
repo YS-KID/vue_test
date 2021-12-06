@@ -8,7 +8,7 @@ const routes: RouteConfig[] = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: () => import('../views/Select.vue'),
   },
   {
     path: '/select',

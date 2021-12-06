@@ -1,114 +1,131 @@
 <template>
-  <div>
-    <div class="d-flex flex-row ma-1" v-if="forecastWeather !== null">
-      <v-card
-        class="d-flex flex-column ma-1"
-        style="width: 200"
-        outlined
-        :img="require('@/assets/sky_2.jpg')"
-      >
-        <div class="d-flex ma-1">
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title class="text-h4">
-                {{ currentWeather.name }}
-              </v-list-item-title>
-              <v-list-item-subtitle class="text-h5">
-                {{ currentWeather.sys.country }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-        <div>
-          <v-divider></v-divider>
-        </div>
-        <div class="d-flex flex-row ma-1">
-          <div class="d-flex ma-1" style="width: 50%" outlined>
-            <p class="averagetemp mt-11 ml-10">
-              {{ currentWeather.main.temp.toFixed(2) }}&deg;C
-            </p>
-          </div>
-          <div class="d-flex align-center ma-1" style="width: 50%" outlined>
-            <v-img
-              v-bind:src="getWeatherIconUrl(currentWeather.weather[0].icon)"
-              alt="Sunny image"
-              height="100"
-              width="100"
-              contain
-            ></v-img>
-          </div>
-        </div>
-
-        <div class="d-flex flex-column ma-1">
-          <v-list-item>
-            <v-list-item-content class="moretemp">
-              <p class="font-weight-bold">
-                Feeling likes
-                {{ currentWeather.main.feels_like.toFixed(2) }}&deg;C.
-                {{
-                  currentWeather.weather[0].description
-                    .charAt(0)
-                    .toUpperCase() +
-                  currentWeather.weather[0].description.slice(1)
-                }}. Wind speed is {{ currentWeather.wind.speed }}m/s.
-              </p>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-      </v-card>
-      <v-card class="d-flex justify-center ma-1" style="width: 200" outlined>
-        <div id="chart">
-          <apexchart
-            type="line"
-            :options="options"
-            :series="series"
-            height="100%"
-            :width="widthApexCharts"
-          ></apexchart>
-        </div>
-      </v-card>
-    </div>
-
-    <div class="d-flex flex-row ma-1" v-if="forecastWeather !== null">
-      <v-card class="d-flex ma-2" style="width: 400" :img="require('@/assets/sky_2.jpg')" outlined>
-        <v-container>
-          <v-row :justify="center">
+  <v-container v-if="forecastWeather !== null">
+    <v-row>
+      <v-col>
+        <v-card
+          class="d-flex flex-column ma-1"
+          style="width: 200"
+          height="300"
+          outlined
+          :img="require('@/assets/sky_2.jpg')"
+        >
+          <div class="d-flex ma-1">
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title class="text-h6">
-                  Weather forecast (every 6 hours)
+                <v-list-item-title class="text-h4">
+                  {{ currentWeather.name }}
                 </v-list-item-title>
+                <v-list-item-subtitle class="text-h5">
+                  {{ currentWeather.sys.country }}
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-          </v-row>
-          <v-row :justify="center">
-            <v-col v-for="n in 7" :key="n">
-              <v-card color="transparent">
-                <v-img
-                  v-bind:src="
-                    getWeatherIconUrl(
-                      forecastWeather.list[n * 2].weather[0].icon
-                    )
-                  "
-                  alt="Sunny image"
-                  height="100"
-                  width="100"
-                  contain
-                ></v-img>
-                <p class="text-center">
-                  {{ getDay(forecastWeather.list[n * 2].dt_txt) }}
+          </div>
+          <div>
+            <v-divider></v-divider>
+          </div>
+          <div class="d-flex flex-row ma-1">
+            <div class="d-flex ma-1" style="width: 50%" outlined>
+              <p class="averagetemp mt-11 ml-10">
+                {{ currentWeather.main.temp.toFixed(2) }}&deg;C
+              </p>
+            </div>
+            <div class="d-flex align-center ma-1" style="width: 50%" outlined>
+              <v-img
+                v-bind:src="getWeatherIconUrl(currentWeather.weather[0].icon)"
+                alt="Sunny image"
+                height="100"
+                width="100"
+                contain
+              ></v-img>
+            </div>
+          </div>
+
+          <div class="d-flex flex-column ma-1">
+            <v-list-item>
+              <v-list-item-content class="moretemp">
+                <p class="font-weight-bold">
+                  Feeling likes
+                  {{ currentWeather.main.feels_like.toFixed(2) }}&deg;C.
+                  {{
+                    currentWeather.weather[0].description
+                      .charAt(0)
+                      .toUpperCase() +
+                    currentWeather.weather[0].description.slice(1)
+                  }}. Wind speed is {{ currentWeather.wind.speed }}m/s.
                 </p>
-                <p class="text-center">
-                  {{ getHour(forecastWeather.list[n * 2].dt_txt) }}
-                </p>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-        <v-col> </v-col>
-      </v-card>
-    </div>
-  </div>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card
+          class="d-flex justify-center ma-1"
+          style="width: 200"
+          height="300"
+          outlined
+        >
+          <div id="chart">
+            <apexchart
+              type="line"
+              :options="options"
+              :series="series"
+              :width="widthApexCharts"
+            ></apexchart>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card
+          class="d-flex ma-2"
+          style="width: 400"
+          :img="require('@/assets/sky_2.jpg')"
+          outlined
+        >
+          <v-container>
+            <v-row :justify="center">
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title class="text-h6">
+                    Weather forecast (every 6 hours)
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-row>
+            <v-row :justify="center">
+              <v-col v-for="n in 7" :key="n">
+                <v-card color="transparent">
+                  <v-layout justify-center>
+                    <v-img
+                      v-bind:src="
+                        getWeatherIconUrl(
+                          forecastWeather.list[n * 2].weather[0].icon
+                        )
+                      "
+                      alt="Sunny image"
+                      height="100"
+                      width="100"
+                      contain
+                    ></v-img>
+                  </v-layout>
+                  <p class="text-center">
+                    {{ getDay(forecastWeather.list[n * 2].dt_txt) }}
+                  </p>
+                  <p class="text-center">
+                    {{ getHour(forecastWeather.list[n * 2].dt_txt) }}
+                  </p>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-col> </v-col>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -203,13 +220,11 @@ export default Vue.extend({
     },
     chartCategory(): string[] {
       const item = this.forecastWeather;
-      console.log(item);
-      console.log(item.city.timezone / 60 / 60);
       const category = item.list
         .map(
           (i: any) =>
             `${String(
-              (Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24
+              ((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24) > 0 ? ((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24) : ((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24) + 24
             )}:00`
         )
         .slice(0, this.forecastDataNum);
@@ -235,15 +250,15 @@ export default Vue.extend({
     widthApexCharts(): string {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
-          return "50%";
+          return "160%";
         case "sm":
-          return "100%";
+          return "160%";
         case "md":
-          return "150%";
+          return "160%";
         case "lg":
           return "160%";
         case "xl":
-          return "200%";
+          return "160%";
       }
     },
   },
