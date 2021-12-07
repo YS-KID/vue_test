@@ -271,16 +271,16 @@ main {
 import { Component, Vue } from "vue-property-decorator";
 
 export interface DataType {
-  city: string;
   navBarFlag: boolean;
   townList: any[];
+  city: String;
 }
 
 export default Vue.extend({
   data(): DataType {
     return {
-      city: "東京",
-      navBarFlag: false,
+      city: "Tokyo",
+      navBarFlag: true,
       townList: [
         {
           name: "Tokyo",
