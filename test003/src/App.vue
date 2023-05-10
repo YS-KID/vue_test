@@ -271,23 +271,42 @@ main {
 import { Component, Vue } from "vue-property-decorator";
 
 export interface DataType {
-  city: string;
   navBarFlag: boolean;
   townList: any[];
+  city: String;
 }
 
 export default Vue.extend({
   data(): DataType {
     return {
-      city: '東京',
-      navBarFlag: false,
+      city: "Tokyo",
+      navBarFlag: true,
       townList: [
-        { name: '東京', icon: 'mdi-vuetify', link: '/weather?city=Tokyo' },
-        { name: '京都', icon: 'mdi-vuetify', link: '/weather?city=Kyoto' },
-        { name: '大阪', icon: 'mdi-vuetify', link: '/weather?city=Osaka' },
-        { name: '沖縄', icon: 'mdi-vuetify', link: '/weather?city=Okinawa' },
-        { name: '札幌', icon: 'mdi-vuetify', link: '/weather?city=Sapporo' },
-        {name: 'New York', icon: 'mdi-vuetify', link: '/weather?city=New York'}
+        {
+          name: "Tokyo",
+          icon: "mdi-vuetify",
+          link: { path: "/weather", query: { city: "Tokyo" } },
+        },
+        {
+          name: "Hong Kong",
+          icon: "mdi-vuetify",
+          link: { path: "/weather", query: { city: "Hong Kong" } },
+        },
+        {
+          name: "New York",
+          icon: "mdi-vuetify",
+          link: { path: "/weather", query: { city: "New York" } },
+        },
+        {
+          name: "London",
+          icon: "mdi-vuetify",
+          link: { path: "/weather", query: { city: "London" } },
+        },
+        {
+          name: "Washington",
+          icon: "mdi-vuetify",
+          link: { path: "/weather", query: { city: "Washington" } },
+        },
       ],
     };
   },

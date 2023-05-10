@@ -1,96 +1,138 @@
 <template>
-  <div>
-    <div class="d-flex flex-row ma-1" v-if="forecastWeather !== null">
-      <v-card
-        class="d-flex flex-column ma-1"
-        style="width: 50%"
-        outlined
-        :img="require('@/assets/sky_2.jpg')"
-      >
-        <div class="d-flex ma-1">
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title class="text-h4">
-                {{ currentWeather.name }}
-              </v-list-item-title>
-              <v-list-item-subtitle class="text-h5">
-                {{ currentWeather.sys.country }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-        <div>
-          <v-divider></v-divider>
-        </div>
-        <div class="d-flex flex-row ma-1">
-          <div class="d-flex ma-1" style="width: 50%" outlined>
-            <p class="averagetemp mt-11 ml-10">
-              {{ currentWeather.main.temp.toFixed(2) }}&deg;C
-            </p>
+  <v-container v-if="forecastWeather !== null">
+    <v-row>
+      <v-col>
+        <v-card
+          class="d-flex flex-column ma-1"
+          style="width: 200"
+          height="300"
+          outlined
+          :img="require('@/assets/sky_2.jpg')"
+        >
+          <div class="d-flex ma-1">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="text-h4">
+                  {{ currentWeather.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="text-h5">
+                  {{ currentWeather.sys.country }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
           </div>
-          <div class="d-flex align-center ma-1" style="width: 50%" outlined>
-            <v-img
-              v-bind:src="getWeatherIconUrl(currentWeather.weather[0].icon)"
-              alt="Sunny image"
-              height="150"
-              width="150"
-              contain
-            ></v-img>
+          <div>
+            <v-divider></v-divider>
           </div>
-        </div>
-        <div class="d-flex flex-column ma-1">
-          <v-list-item>
-            <v-list-item-icon class="tempicon">
-              <v-icon>mdi-thermometer-high</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content class="moretemp">
-              <p class="font-weight-bold">
-                Highest temp:
-                {{ currentWeather.main.temp_max.toFixed(2) }}&deg;C
+          <div class="d-flex flex-row ma-1">
+            <div class="d-flex ma-1" style="width: 50%" outlined>
+              <p class="averagetemp mt-11 ml-10">
+                {{ currentWeather.main.temp.toFixed(2) }}&deg;C
               </p>
-            </v-list-item-content>
-          </v-list-item>
+            </div>
+            <div class="d-flex align-center ma-1" style="width: 50%" outlined>
+              <v-img
+                v-bind:src="getWeatherIconUrl(currentWeather.weather[0].icon)"
+                alt="Sunny image"
+                height="100"
+                width="100"
+                contain
+              ></v-img>
+            </div>
+          </div>
 
-          <v-list-item>
-            <v-list-item-icon class="tempicon">
-              <v-icon>mdi-thermometer-low</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content class="moretemp">
-              <p class="font-weight-bold">
-                Lowest temp:
-                {{ currentWeather.main.temp_min.toFixed(2) }}&deg;C
-              </p>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-      </v-card>
-      <v-card class="d-flex justify-center ma-1" style="width: 50%" outlined>
-        <div id="chart">
-          <apexchart
-            type="line"
-            :options="options"
-            :series="series"
-            height="100%"
-            :width="widthApexCharts"
-          ></apexchart>
-        </div>
-      </v-card>
-    </div>
-
-    <v-card class="d-flex ma-2" outlined> 5 days forecast</v-card>
-
-    <div class="d-flex flex-row ma-2" style="height: 350px">
-      <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/2/1.png'"></v-img>
-      <v-img v-bind:src="'https://a.tile.openstreetmap.org/2/3/1.png'"></v-img>
-    </div>
-  </div>
+          <div class="d-flex flex-column ma-1">
+            <v-list-item>
+              <v-list-item-content class="moretemp">
+                <p class="font-weight-bold">
+                  Feeling likes
+                  {{ currentWeather.main.feels_like.toFixed(2) }}&deg;C.
+                  {{
+                    currentWeather.weather[0].description
+                      .charAt(0)
+                      .toUpperCase() +
+                    currentWeather.weather[0].description.slice(1)
+                  }}. Wind speed is {{ currentWeather.wind.speed }}m/s.
+                </p>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card
+          class="d-flex justify-center ma-1"
+          style="width: 200"
+          height="300"
+          outlined
+        >
+          <div id="chart">
+            <apexchart
+              type="line"
+              :options="options"
+              :series="series"
+              :width="widthApexCharts"
+            ></apexchart>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card
+          class="d-flex ma-2"
+          style="width: 400"
+          :img="require('@/assets/sky_2.jpg')"
+          outlined
+        >
+          <v-container>
+            <v-row :justify="center">
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title class="text-h6">
+                    Weather forecast (every 6 hours)
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-row>
+            <v-row :justify="center">
+              <v-col v-for="n in 7" :key="n">
+                <v-card color="transparent">
+                  <v-layout justify-center>
+                    <v-img
+                      v-bind:src="
+                        getWeatherIconUrl(
+                          forecastWeather.list[n * 2].weather[0].icon
+                        )
+                      "
+                      alt="Sunny image"
+                      height="100"
+                      width="100"
+                      contain
+                    ></v-img>
+                  </v-layout>
+                  <p class="text-center">
+                    {{ getDay(forecastWeather.list[n * 2].dt_txt) }}
+                  </p>
+                  <p class="text-center">
+                    {{ getHour(forecastWeather.list[n * 2].dt_txt) }}
+                  </p>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-col> </v-col>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
 import { Vue } from "vue-property-decorator";
 import ApiClient from "../api/ApiClient";
 import VueApexCharts from "vue-apexcharts";
-import { ApexOptions } from 'apexcharts';
+import { ApexOptions } from "apexcharts";
 
 Vue.use(VueApexCharts);
 Vue.component("apexchart", VueApexCharts);
@@ -100,18 +142,34 @@ export interface DataType {
   currentWeather: any | null;
   forecastWeather: any | null;
   forecastDataNum: number;
+  month: string[];
 }
 
 export default Vue.extend({
   data(): DataType {
     return {
-      city: '',
+      city: "",
       currentWeather: null,
       forecastWeather: null,
       forecastDataNum: 9,
+      month: [
+        "Jan. ",
+        "Feb. ",
+        "Mar. ",
+        "Apr. ",
+        "May ",
+        "June ",
+        "July ",
+        "Aug. ",
+        "Sept.",
+        "Oct. ",
+        "Nov. ",
+        "Dec. ",
+      ],
     };
   },
-  async mounted() {
+
+  async mounted(): Promise<void> {
     this.city = this.$route.query.city as string;
     this.currentWeather = await ApiClient.getCurrentWeather(this.city);
     this.forecastWeather = await ApiClient.getForecastWeather(this.city);
@@ -149,7 +207,7 @@ export default Vue.extend({
           },
         },
         title: {
-          text: "Forecast Temperature(24 hours)",
+          text: "Temperature forecast (24 hours)",
           align: "left",
         },
       };
@@ -162,14 +220,15 @@ export default Vue.extend({
     },
     chartCategory(): string[] {
       const item = this.forecastWeather;
-      console.log(item);
-      console.log(item.city.timezone / 60 / 60);
       const category = item.list
         .map(
           (i: any) =>
-            `${String((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24)}:00`
+            `${String(
+              ((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24) > 0 ? ((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24) : ((Number(i.dt_txt.substr(11, 2)) + item.city.timezone / 3600) % 24) + 24
+            )}:00`
         )
         .slice(0, this.forecastDataNum);
+      category[0] = "now";
       return category;
     },
     chartData(): number[] {
@@ -188,18 +247,18 @@ export default Vue.extend({
         },
       ];
     },
-    widthApexCharts() {
+    widthApexCharts(): string {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
-          return "50%";
+          return "160%";
         case "sm":
-          return "100%";
+          return "160%";
         case "md":
-          return "150%";
+          return "160%";
         case "lg":
           return "160%";
         case "xl":
-          return "200%";
+          return "160%";
       }
     },
   },
@@ -207,13 +266,12 @@ export default Vue.extend({
     getWeatherIconUrl(iconId: string): string {
       return `http://openweathermap.org/img/wn/${iconId}@2x.png`;
     },
-    getParams(params: string): { [key: string]: string } {
-      const paramsArray = params.slice(1).split("&");
-      const paramsObject: { [key: string]: string } = {};
-      paramsArray.forEach((param) => {
-        paramsObject[param.split("=")[0]] = param.split("=")[1];
-      });
-      return paramsObject;
+    getDay(date: string): string {
+      console.log(date);
+      return `${this.month[Number(date.substr(5, 2)) - 1]}${date.substr(8, 2)}`;
+    },
+    getHour(date: string): string {
+      return `${date.substr(11, 5)}`;
     },
   },
 });
